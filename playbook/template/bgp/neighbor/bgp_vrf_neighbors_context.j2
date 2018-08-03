@@ -1,3 +1,7 @@
+{% extends bgp_vrf_context.j2 %}
+
+{% block bgp_vrf_neighbors_context %}
+
 {% for neighbor in vrf.neighbors %}
   neighbor {{ neighbor.neighbor_ip }}
    remote-as {{ neighbor.remote_as }}
@@ -26,3 +30,5 @@
       {% endif %}
    {% endfor %}  
 {% endfor %}
+
+{% endblock %}
