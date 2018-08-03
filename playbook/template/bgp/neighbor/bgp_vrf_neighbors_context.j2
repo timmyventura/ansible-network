@@ -1,0 +1,28 @@
+{% for neighbor in vrf.neighbors %}
+  neighbor {{ neighbor.neighbor_ip }}
+   remote-as {{ neighbor.remote_as }}
+  {% if neighbor.ebgp.flag==true %}
+   ebgp-multihop {{ neighbor.ebgp.multihop }}
+   {% endif %}
+   {% if neighbor.timers.flag==true %}
+   timers {{ neighbor.timers.hello }} {{ neighbor.timers.dead }}
+   {% endif %} 
+   {% if neighbor.local_as.flag==true %}
+   local-as {{ neighbor.local_as.number }} {% if neighbor.local_as.no_prepend==true %} no-prepend {% endif %} {% if neighbor.local_as.replace_as==true %}replace-as{% endif %}
+   {% endif %} 
+   description {{ neighbor.description }}
+   {% for af, elems in neighbor.neighbor_address_family.items() %} 
+      {% if elems.flag == true %}
+        address-family {{ af }}
+		  {% if elems.send_community_ebgp %}
+		    send_community_ebgp
+          {% endif %}		  
+          {% if elems.route_policy_in %}
+            route-policy {{ elems.route_policy_in }} in
+          {% endif %}
+          {% if elems.route_policy_out %}
+            route-policy {{ elems.route_policy_out }} out
+          {% endif %}
+      {% endif %}
+   {% endfor %}  
+{% endfor %}

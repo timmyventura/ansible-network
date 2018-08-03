@@ -1,0 +1,31 @@
+{% extends bgp_base.j2 %}
+
+{% block bgp_global_address_family_context%}
+
+{% for af, elems in bgp.address_family.items() %}
+ {% if elems.flag == true %}
+   address-family {{ af }}
+	 {% if elems.bgp_attribute_download %}
+	     bgp attribute-download
+	 {% endif %}
+	 {% if elems.distance_bgp %}
+	     distance {{ elems.distance_bgp | join(' ') }}
+	 {% endif %}
+ {% endif %}
+ {% if elems.network %}
+   {% for net in elems.network %}
+     network {{ net.address }} {% if net.route_policy.flag == true %} route-policy {{net.route_policy.name}} {% endif %}
+   {% endfor %}
+ {% endif %}
+ {% if elems.additional_paths %}
+   {% for path in elems.additional_paths %}
+     {% if path.selection %}
+      additional-paths selection route-policy {{ path.selection.route_policy }}
+	 {% else %}
+	   additional-paths {{ path }}
+	 {% endif %}
+   {% endfor %}
+ {% endif %} 
+{% endfor %}
+
+{% block bgp_global_address_family_context%}

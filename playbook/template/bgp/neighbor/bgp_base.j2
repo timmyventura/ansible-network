@@ -1,0 +1,25 @@
+router bgp {{ bgp.as_num }}
+{% if bgp.nsr %}
+nsr
+{% endif %}
+{% if bgp.router_id %}
+bgp router-id {{ bgp.router_id }}
+{% endif %}
+###########################Global Address Family Context###############################
+{% if bgp.address_family %}
+ {% block bgp_global_address_family_context %}
+ {% endblock %}
+{% endif %}
+############################Neighbors in global############################################
+{% if bgp.neighbors %}
+ {% block bgp_neighbors_context %}
+ {% endblock %}
+{% endif %}
+#################################################################################################### 
+####################################################################################################
+#################################### Vrf Context####################################################  
+{% if bgp.vrf %}
+ {% block bgp_vrf_context %}
+ {% endblock %}
+{% endif %}
+#################################################################################################  
