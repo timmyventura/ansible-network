@@ -1,0 +1,23 @@
+{% if interfaces_bundles %}
+  {% for intf in interfaces_bundles %}
+    interface {{ intf.interface }}
+	  description {{ intf.description }}
+	  {% if intf.mtu %}
+	    mtu {{ intf.mtu }}
+	  {% endif %}
+	  {% if intf.bundle_load_balancing %}
+	    bundle load-balancing {{ intf.bundle_load_balancing }}
+	  {% endif %}
+	{% if intf.childs_l2transport is defined %}
+	   {% for intfl2 in intf.childs_l2transport %}
+	     interface {{ intfl2.interface }}
+		    {% if intfl2.encapsulation.type != 'untagged' %}
+			  encapsulation {{ intfl2.encapsulation.type }} {{intfl2.encapsulation.number}} {{ intfl2.encapsulation.action }}
+            {% elif intfl2.encapsulation.type == 'untagged' %}	
+			  encapsulation untagged
+            {% endif %}		
+             rewrite ingress tag {{ intfl2.rewrite_ingress_tag }}		
+	   {% endfor %}
+	{% endif %}
+  {% endfor %}
+{% endif %}
